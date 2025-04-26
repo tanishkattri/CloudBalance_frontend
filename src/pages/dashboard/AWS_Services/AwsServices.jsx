@@ -20,7 +20,15 @@ const AwsServices = () => {
     const fetchAccounts = async () => {
       try {
         const res = await getApi("/accounts");
+        const accounts = res.data
         setAllAccounts(res.data);
+        if (accounts.length > 0) {
+          setSelectedAccountNumber(accounts[0].accountNumber);
+        }
+
+        if (services.length > 0) {
+          setSelectedService(services[0].serviceType); 
+        }
       } catch (err) {
         console.error("Failed to fetch accounts", err);
       }
@@ -29,28 +37,6 @@ const AwsServices = () => {
     fetchAccounts();
   }, []);
 
-  // const handleServiceClick = async (serviceType) => {
-  //   if (!selectedAccountNumber) {
-  //     alert("Please select an account first.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const res = await getApi(
-  //       `/aws/${serviceType}?accountNumber=${selectedAccountNumber}`
-  //     );
-  //     setSelectedService(serviceType);
-  //     setTableData(
-  //       res.data.map((item, idx) => ({
-  //         id: idx + 1,
-  //         ...item,
-  //       }))
-  //     );
-  //   } catch (err) {
-  //     console.error(`Error fetching ${serviceType} data:`, err);
-  //     setTableData([]);
-  //   }
-  // };
 
   useEffect(() => {
     const fetchServiceData = async () => {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ClipboardCopy } from "lucide-react";
+import { toast } from "react-toastify";
 
 const CopyCodeBlock = ({ value, copyPosition = "right" }) => {
   const [copied, setCopied] = useState(false);
@@ -11,6 +12,7 @@ const CopyCodeBlock = ({ value, copyPosition = "right" }) => {
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
+    toast.success("Copied to clipboard!")
   };
 
   return (
@@ -38,11 +40,6 @@ const CopyCodeBlock = ({ value, copyPosition = "right" }) => {
         Click anywhere in box to copy the content inside.
       </span>
 
-      {copied && (
-        <span className="absolute -bottom-5 left-1 text-green-600 text-xs">
-          Copied!
-        </span>
-      )}
     </div>
   );
 };

@@ -3,6 +3,7 @@ import Header from "../../component/Header";
 import SideBar from "../../component/SideBar";
 import { adminCon } from "./SideBarConfig";
 import { Outlet } from "react-router-dom";
+import Footer from "../../component/Footer";
 
 const Dashboard = () => {
   return (
@@ -24,6 +25,12 @@ const Dashboard = () => {
       <main className="ml-64 mt-14 h-[calc(100vh-4rem)] overflow-y-auto p-6 bg-gray-50">
         <Outlet />
       </main>
+
+      <div className="fixed mb-0 pb-0 bottom-0 left-0 right-0 z-50 h-12 bg-white border-t">
+        <Footer />
+      </div>
+
+      
       
     </div>
   );

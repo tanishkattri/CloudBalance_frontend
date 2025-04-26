@@ -16,17 +16,6 @@ function App() {
   useEffect(() => {
     setNavigator(navigate);
   }, [navigate]);
-
-  <ToastContainer
-    position="top-right"
-    autoClose={3000}
-    hideProgressBar={false}
-    newestOnTop
-    closeOnClick
-    pauseOnHover
-    theme="light"
-  />;
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -47,8 +36,16 @@ function App() {
 
   return (
     <>
-      <AppRoutes />;
-      <ToastContainer />
+      <AppRoutes />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        theme="light"
+      />
     </>
   );
 }

@@ -4,6 +4,7 @@ import RoleProtectedRoute from "../component/RoleProtectedRoutes";
 import Errorpage from "../component/ErrorPage/Errorpage";
 import CenteredLoader from "../component/CenteredLoader";
 import Login from "../pages/login/Login";
+// import CostExplorer from "../pages/dashboard/CostExplorer/CostExplorer";
 
 // Lazy load everything else
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
@@ -13,6 +14,7 @@ const UpdateUser = lazy(() => import("../pages/dashboard/UserManagement/updateUs
 const Onboarding = lazy(() => import("../pages/dashboard/Onboarding/Onboarding"));
 const SubmitPage = lazy(() => import("../pages/dashboard/Onboarding/SubmitPage"));
 const AwsServices = lazy(() => import("../pages/dashboard/AWS_Services/AwsServices"));
+const CostExplorer = lazy(() => import("../pages/dashboard/CostExplorer/CostExplorer"));
 
 const AppRoutes = () => {
   return (
@@ -76,7 +78,13 @@ const AppRoutes = () => {
             </Suspense>
           }
         />
-        <Route path="cost-explorer" element={<h1>Cost Explorer</h1>} />
+        <Route path="cost-explorer" element={
+          <Suspense fallback={<CenteredLoader />}>
+          <RoleProtectedRoute allowedRoles={["ADMIN", "READ_ONLY", "CUSTOMER"]}>
+            <CostExplorer />
+          </RoleProtectedRoute>
+        </Suspense>
+        } />
         <Route path="aws-services" element={
           <Suspense fallback={<CenteredLoader />}>
             <RoleProtectedRoute allowedRoles={["ADMIN", "READ_ONLY", "CUSTOMER"]}>

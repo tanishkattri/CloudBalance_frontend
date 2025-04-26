@@ -7,7 +7,7 @@ import { setUserData } from "../../redux/reducer";
 import FormRenderer from "../../component/form/FormRender";
 import CommonButton from "../../component/button";
 import { postApi, getApi } from "../../services/apiService";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -49,7 +49,7 @@ const Login = () => {
     try {
       const response = await postApi("/auth/signin", data);
 
-      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("token", response.data.data.token);
       toast.success("Login successful!");
       const userRes = await getApi("/users/me");
       dispatch(setUserData(userRes.data));
@@ -58,7 +58,7 @@ const Login = () => {
       }, 600);
     } catch (err) {
       console.error("Login error:", err.message);
-    
+
       const backendMessage = err?.response?.data?.message;
 
       toast.error(backendMessage || "Login failed. Please try again.");
@@ -83,7 +83,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-white px-4">
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <form
         onSubmit={handleLogin}
         className="bg-white shadow-xl rounded-[2rem] w-full max-w-sm p-8 space-y-5"
