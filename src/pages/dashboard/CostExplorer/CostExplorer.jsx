@@ -5,12 +5,11 @@ import CenteredLoader from "../../../component/CenteredLoader";
 import GroupByTabs from "../../../component/GroupBy";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import IconButton from "@mui/material/IconButton";
-import ScopeLoader from "../../../component/ScopeLoader";
 import FilterSidebar from "../../../component/FilterSideBar";
 import { toast } from "react-toastify";
 import TwoDBarChart from "../../../component/TwoDBarChart";
-
-
+import LineChart from "../../../component/LineChart";
+import MuiDataTable from "../../../component/table/DataTable";
 const CostExplorer = () => {
   const [loading, setLoading] = useState(false);
   const [allAccounts, setAllAccounts] = useState([]);
@@ -31,7 +30,20 @@ const CostExplorer = () => {
     endMonth, // e.g. "2024-06"
     groupBy: currentGroup,
     filters: filtersMap,
+    accountNumber: selectedAccountNumber,
   };
+
+  const tableColumns = [
+    { field: "USAGE_MONTH", headerName: "Usage Month", flex: 1 },
+    { field: currentGroup, headerName: currentGroup, flex: 1 },
+    { field: "TOTAL_USAGE_COST", headerName: "Total Usage Cost (₹)", flex: 1 },
+  ];
+
+  // 💬 Create table rows by adding an 'id' 
+  const tableRows = (costData || []).map((item, index) => ({
+    id: index + 1,
+    ...item,
+  }));
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -72,7 +84,12 @@ const CostExplorer = () => {
       try {
         setCostLoading(true); // Start loading
         const res = await postApi("/snowflake/cost", requestPayload);
-        setCostData(res.data.data);
+        if (res.data.data.length === 0) {
+          setCostData([]);
+          toast.error("No data found for the fields ❗");
+        } else {
+          setCostData(res.data.data);
+        }
       } catch (err) {
         console.error("Failed to fetch cost data", err);
         toast.error("Failed to fetch cost data ❌");
@@ -84,12 +101,13 @@ const CostExplorer = () => {
     if (currentGroup) {
       fetchCostData();
     }
-  }, [currentGroup, filtersMap, startMonth, endMonth]);
+  }, [currentGroup, filtersMap, startMonth, endMonth, selectedAccountNumber]);
+
 
   return (
     <>
       {loading && <CenteredLoader />}
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex justify-between items-center mb-8 max-h-full">
         <div>
           <h2 className="text-xl font-semibold">Cost Explorer</h2>
           <p>How to always be aware of cost changes and history</p>
@@ -106,7 +124,7 @@ const CostExplorer = () => {
         </div>
       </div>
 
-      <div className="bg-white shadow-xl p-8 space-y-5 relative">
+      <div className="bg-white shadow-xl p-8 space-y-5 relative pb-32">
         <div className="flex justify-between items-center mb-4">
           <GroupByTabs
             groupByOptions={groupByOptions}
@@ -151,17 +169,20 @@ const CostExplorer = () => {
 
         <div className="relative flex">
           {/* 📊 Chart Area */}
-          <div className={`${showFilterSidebar ? "w-[calc(100%-300px)]" : "w-full"} transition-all duration-300`}>
+          <div
+            className={`${
+              showFilterSidebar ? "w-[calc(100%-300px)]" : "w-full"
+            } transition-all duration-300`}
+          >
             {costLoading || !costData ? (
               <CenteredLoader /> // 🌟 Show loader while fetching or empty
             ) : (
-              <TwoDBarChart
-                costData={costData}
-                groupByKey= {currentGroup}
-              />
+              <TwoDBarChart costData={costData} groupByKey={currentGroup} />
             )}
           </div>
+
           {/* 🎯 Filter Sidebar */}
+
           {showFilterSidebar && (
             <FilterSidebar
               sidebarLoading={sidebarLoading}
@@ -172,9 +193,27 @@ const CostExplorer = () => {
             />
           )}
         </div>
+        <div>
+          {costLoading || !costData ? (
+            <CenteredLoader />
+          ) : (
+            <LineChart costData={costData} groupByKey={currentGroup} />
+          )}
+        </div>
+        <div>
+          {costLoading || !costData ? (
+            <CenteredLoader />
+          ) : (
+            <div className="w-full">
+              <MuiDataTable
+                columns={tableColumns}
+                rows={tableRows}
+                pageSize={5}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      {
-      console.log(currentGroup)}
     </>
   );
 };

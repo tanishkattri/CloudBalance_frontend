@@ -5,6 +5,8 @@ const userConfig = [
         type: "text",
         placeholder: "Enter first name",
         required: true,
+        minlength : 2,
+        maxlength : 20,
     },
     {
         name: "lastName",
@@ -12,6 +14,8 @@ const userConfig = [
         type: "text",
         placeholder: "Enter last name",
         required: true,
+        minlength : 2,
+        maxlength : 20,
     },
     {
         name: "email",
@@ -19,6 +23,7 @@ const userConfig = [
         type: "email",
         placeholder: "Enter email address",
         required: true,
+        pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$",
     },
     {
         name: "role",
@@ -37,6 +42,8 @@ const userConfig = [
         type: "password",
         placeholder: "Enter password",
         required: true,
+        minlength : 8,
+        maxlength : 20,
     },
     {
         name: "confirmPassword",
@@ -44,6 +51,8 @@ const userConfig = [
         type: "password",
         placeholder: "Confirm password",
         required: true,
+        minlength : 8,
+        maxlength : 20,
     }
     
 ]

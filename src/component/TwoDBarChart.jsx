@@ -10,10 +10,10 @@ FusionTheme(FusionCharts);
 const TwoDBarChart = ({ costData = [], groupByKey = "MYCLOUD_COST_EXPLORER_USAGE_GROUP_TYPE" }) => {
   if (!costData.length) return null;
 
-  // 🔥 Step 1: Extract unique months
+  // Step 1: Extract unique months
   const uniqueMonths = Array.from(new Set(costData.map(item => item.USAGE_MONTH)));
 
-  // 🔥 Step 2: Extract unique group names (filter nulls)
+  // Step 2: Extract unique group names (filter nulls)
   const uniqueGroups = Array.from(
     new Set(
       costData
@@ -46,15 +46,15 @@ const TwoDBarChart = ({ costData = [], groupByKey = "MYCLOUD_COST_EXPLORER_USAGE
 
   const dataSource = {
     chart: {
-      caption: "Cloud Cost Explorer - Top Usage Groups",
+      caption: "Cloud Cost Explorer",
       xAxisName: "Month",
-      yAxisName: "Total Cost (₹)",
-      numberPrefix: "₹",
+      yAxisName: "Total Cost ($)",
+      numberPrefix: "$",
       theme: "fusion",
       drawCrossLine: "1",
       showValues: "0",
       decimals: "2",
-      plotToolText: "$seriesName in $label: ₹$dataValue"
+      plotToolText: "$seriesName in $label: $dataValue"
     },
     categories,
     dataset
