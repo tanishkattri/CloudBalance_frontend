@@ -260,6 +260,7 @@ const CostExplorer = () => {
           )}
         </div>
       </div>
+      {console.log("costData", costData)}
     </>
   );
 };

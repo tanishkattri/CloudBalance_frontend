@@ -2,15 +2,27 @@ import React, { useState } from "react";
 import { loginFields, loginButton } from "./loginConfig";
 import cloudLogo from "/home/tanishk/Downloads/CloudBalanceFrontEnd/CloudBalance/src/images/image1.png";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../../redux/reducer";
 import FormRenderer from "../../component/form/FormRender";
 import CommonButton from "../../component/button";
 import { postApi, getApi } from "../../services/apiService";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
+
 
 const Login = () => {
   const navigate = useNavigate();
+  const user = useSelector((state) => state.userReducer.user);
+
+  useEffect(() => {
+    if (user?.role === "ADMIN" || user?.role === "READ_ONLY") {
+      navigate("/dashboard/users", { replace: true });
+    } else if (user?.role === "CUSTOMER") {
+      navigate("/dashboard/cost-explorer", { replace: true });
+    }
+  }, [user, navigate]);
+  
   const [data, setData] = useState({
     email: "",
     password: "",
@@ -37,6 +49,7 @@ const Login = () => {
 
     return newErrors;
   };
+
 
   const handleLogin = async (e) => {
     e.preventDefault();

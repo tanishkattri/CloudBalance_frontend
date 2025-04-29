@@ -12,7 +12,7 @@ const CopyCodeBlock = ({ value, copyPosition = "right" }) => {
     );
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
-    toast.success("Copied to clipboard!")
+    toast.success("Copied to clipboard!");
   };
 
   return (
@@ -22,9 +22,7 @@ const CopyCodeBlock = ({ value, copyPosition = "right" }) => {
         className="cursor-pointer bg-blue-50 border border-blue-500 rounded-md px-4 py-3 text-sm text-black font-mono whitespace-pre-wrap break-words overflow-auto max-h-96"
       >
         <pre className="whitespace-pre-wrap pl-6">
-          {typeof value === "object"
-            ? JSON.stringify(value, null, 2)
-            : value}
+          {typeof value === "object" ? JSON.stringify(value, null, 2) : value}
         </pre>
 
         <button
@@ -39,7 +37,6 @@ const CopyCodeBlock = ({ value, copyPosition = "right" }) => {
       <span className="text-xs text-blue-600 mt-1 block">
         Click anywhere in box to copy the content inside.
       </span>
-
     </div>
   );
 };

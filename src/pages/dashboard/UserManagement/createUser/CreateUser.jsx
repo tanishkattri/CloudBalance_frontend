@@ -64,7 +64,10 @@ const CreateUser = () => {
 
   const payload = {
     ...formData,
-    accounts: formData.accounts.map((acc) => acc.id),
+    accounts:
+    formData.role === "CUSTOMER"
+      ? formData.accounts.map((acc) => acc.id)
+      : [],
   };
 
   // const handleChange = (e) => {
