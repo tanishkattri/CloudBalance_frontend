@@ -26,28 +26,12 @@ const userUpdateConfig = [
       type: "select",
       required: true,
       options: [
-        { value: "", label: "--Select Role--" },
+        { value: "", label: "--Select Role--", disabled: true },
         { value: "ADMIN", label: "ADMIN" },
         { value: "CUSTOMER", label: "CUSTOMER" },
         { value: "READ_ONLY", label: "READ_ONLY" },
       ],
     },
-    // {
-    //   name: "password",
-    //   label: "Password",
-    //   type: "password",
-    //   placeholder: "Enter new password (optional)",
-    //   required: false,
-    //   autoComplete: "new-password",
-    // },
-    // {
-    //   name: "confirmPassword",
-    //   label: "Confirm Password",
-    //   type: "password",
-    //   placeholder: "Confirm new password",
-    //   required: false,
-    //   autoComplete: "new-password", 
-    // },
   ];
   
   export default userUpdateConfig;

@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import CommonButton from "../../../../component/button";
 import { postApi } from "../../../../services/apiService";
 import { toast } from "react-toastify";
+import AccountSelector from "../../../../component/AccountSelector";
 
 const CreateUser = () => {
   const navigate = useNavigate();
@@ -65,9 +66,9 @@ const CreateUser = () => {
   const payload = {
     ...formData,
     accounts:
-    formData.role === "CUSTOMER"
-      ? formData.accounts.map((acc) => acc.id)
-      : [],
+      formData.role === "CUSTOMER"
+        ? formData.accounts.map((acc) => acc.id)
+        : [],
   };
 
   // const handleChange = (e) => {
@@ -99,16 +100,16 @@ const CreateUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!validateAllFields()) {
       return;
     }
-  
+
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
-  
+
     try {
       await postApi("/users", payload);
       toast.success("User created successfully");
@@ -155,74 +156,22 @@ const CreateUser = () => {
             errors={errors}
           />
           {formData.role === "CUSTOMER" && (
-            <div className="col-span-2 bg-gray-50 border border-gray-300 p-4 rounded-md">
-              <h3 className="text-md font-semibold mb-3">Assign Accounts</h3>
-
-              <div className="grid grid-cols-2 gap-6">
-                {/* All Accounts */}
-                <div>
-                  <h4 className="font-medium mb-2">All Accounts</h4>
-                  <div className="max-h-40 overflow-y-auto border p-2 rounded">
-                    {allAccounts.map((acc) => (
-                      <div
-                        key={acc.id}
-                        className="flex items-center justify-between py-1"
-                      >
-                        <span>
-                          {acc.accountName} ({acc.accountNumber})
-                        </span>
-                        <button
-                          type="button"
-                          className="text-blue-600 hover:underline text-sm"
-                          onClick={() =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              accounts: [...prev.accounts, acc],
-                            }))
-                          }
-                          disabled={formData.accounts.some(
-                            (a) => a.id === acc.id
-                          )}
-                        >
-                          Add
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Selected Accounts */}
-                <div>
-                  <h4 className="font-medium mb-2">Selected Accounts</h4>
-                  <div className="max-h-40 overflow-y-auto border p-2 rounded">
-                    {formData.accounts.map((acc) => (
-                      <div
-                        key={acc.id}
-                        className="flex items-center justify-between py-1"
-                      >
-                        <span>
-                          {acc.accountName} ({acc.accountNumber})
-                        </span>
-                        <button
-                          type="button"
-                          className="text-red-500 hover:underline text-sm"
-                          onClick={() =>
-                            setFormData((prev) => ({
-                              ...prev,
-                              accounts: prev.accounts.filter(
-                                (a) => a.id !== acc.id
-                              ),
-                            }))
-                          }
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <AccountSelector
+              allAccounts={allAccounts}
+              selectedAccounts={formData.accounts}
+              onAddAccount={(acc) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  accounts: [...prev.accounts, acc],
+                }))
+              }
+              onRemoveAccount={(id) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  accounts: prev.accounts.filter((a) => a.id !== id),
+                }))
+              }
+            />
           )}
 
           {/* Submit Button */}

@@ -202,7 +202,7 @@ const CostExplorer = () => {
             } transition-all duration-300`}
           >
             {costLoading || !costData ? (
-              <CenteredLoader /> // 🌟 Show loader while fetching or empty
+              <CenteredLoader /> 
             ) : (
               <TwoDBarChart costData={costData} groupByKey={currentGroup} />
             )}
@@ -260,7 +260,6 @@ const CostExplorer = () => {
           )}
         </div>
       </div>
-      {console.log("costData", costData)}
     </>
   );
 };

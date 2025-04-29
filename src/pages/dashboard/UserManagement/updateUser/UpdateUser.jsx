@@ -5,6 +5,7 @@ import userUpdateConfig from "./updateUserConfig";
 import { getApi, putApi } from "../../../../services/apiService";
 import { toast } from "react-toastify";
 import CommonButton from "../../../../component/button";
+import AccountSelector from "../../../../component/AccountSelector";
 
 const UpdateUser = () => {
   const navigate = useNavigate();
@@ -15,8 +16,6 @@ const UpdateUser = () => {
     lastName: "",
     email: "",
     role: "",
-    password: "",
-    confirmPassword: "",
     accounts: [],
   });
 
@@ -33,8 +32,6 @@ const UpdateUser = () => {
           lastName: userData.lastName || "",
           email: userData.email || "",
           role: userData.role || "",
-          password: "",
-          confirmPassword: "",
           accounts: userData.accounts || [],
         });
       } catch (err) {
@@ -104,72 +101,22 @@ const UpdateUser = () => {
         />
 
         {user.role === "CUSTOMER" && (
-          <div className="col-span-2 bg-gray-50 border border-gray-300 p-4 rounded-md">
-            <h3 className="text-md font-semibold mb-3">Assign Accounts</h3>
-
-            <div className="grid grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium mb-2">All Accounts</h4>
-                <div className="max-h-40 overflow-y-auto border p-2 rounded">
-                  {allAccounts.map((acc) => (
-                    <div
-                      key={acc.id}
-                      className="flex items-center justify-between py-1"
-                    >
-                      <span>
-                        {acc.accountName} ({acc.accountNumber})
-                      </span>
-                      <button
-                        type="button"
-                        className="text-blue-600 hover:underline text-sm"
-                        onClick={() =>
-                          setUser((prev) => ({
-                            ...prev,
-                            accounts: [...prev.accounts, acc.id],
-                          }))
-                        }
-                        disabled={user.accounts.includes(acc.id)}
-                      >
-                        Add
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-medium mb-2">Selected Accounts</h4>
-                <div className="max-h-40 overflow-y-auto border p-2 rounded">
-                  {allAccounts
-                    .filter((acc) => user.accounts.includes(acc.id))
-                    .map((acc) => (
-                      <div
-                        key={acc.id}
-                        className="flex items-center justify-between py-1"
-                      >
-                        <span>
-                          {acc.accountName} ({acc.accountNumber})
-                        </span>
-                        <button
-                          type="button"
-                          className="text-red-500 hover:underline text-sm"
-                          onClick={() =>
-                            setUser((prev) => ({
-                              ...prev,
-                              accounts: prev.accounts.filter(
-                                (id) => id !== acc.id
-                              ),
-                            }))
-                          }
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <AccountSelector
+            allAccounts={allAccounts}
+            selectedAccounts={user.accounts}
+            onAddAccount={(acc) =>
+              setUser((prev) => ({
+                ...prev,
+                accounts: [...prev.accounts, acc.id],
+              }))
+            }
+            onRemoveAccount={(id) =>
+              setUser((prev) => ({
+                ...prev,
+                accounts: prev.accounts.filter((accId) => accId !== id),
+              }))
+            }
+          />
         )}
 
         <div className="col-span-2 flex justify-center mt-4">
