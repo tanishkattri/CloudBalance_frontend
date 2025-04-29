@@ -22,7 +22,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       try {
         const response = await getApi("/users");
-        setUsers(response.data);
+        setUsers(response.data.data);
       } catch (error) {
         console.error("Failed to fetch users:", error);
       }

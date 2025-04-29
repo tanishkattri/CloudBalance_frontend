@@ -1,7 +1,7 @@
 import React from "react";
 import InputRenderer from "./InputRender";
 
-const FormRenderer = ({ fields, data, onChange, errors }) => {
+const FormRenderer = ({ fields, data, onChange, onBlur, errors }) => {
   return (
     <>
       {fields.map((field) => (
@@ -10,6 +10,7 @@ const FormRenderer = ({ fields, data, onChange, errors }) => {
           field={field}
           value={data[field.name]}
           onChange={onChange}
+          onBlur={onBlur}
           error={errors?.[field.name]}
         />
       ))}

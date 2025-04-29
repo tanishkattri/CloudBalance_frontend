@@ -4,7 +4,7 @@ import CopyCodeBlock from "../../../../../component/CopyCodeBloack";
 import FormRenderer from "../../../../../component/form/FormRender";
 import CommonButton from "../../../../../component/button";
 
-const I_AM_Role = ({ data, nextStep, onChange, setErrors, errors, cancel }) => {
+const I_AM_Role = ({ data, nextStep, onChange, onBlur, setErrors, errors, cancel, isFormValid }) => {
   const handleNextClick = () => {
     const { accountName, accountNumber, arnNumber } = data;
     const arnRegex = /^arn:aws:iam::\d{12}:role\/[\w+=,.@-]+$/;
@@ -98,6 +98,7 @@ const I_AM_Role = ({ data, nextStep, onChange, setErrors, errors, cancel }) => {
                         fields={item.fields}
                         data={data}
                         onChange={onChange}
+                        onBlur={onBlur}
                         errors={errors}
                       />
                     </div>
@@ -129,6 +130,7 @@ const I_AM_Role = ({ data, nextStep, onChange, setErrors, errors, cancel }) => {
           onClick={handleNextClick}
           fullWidth={false}
           className="px-6 py-2"
+          disabled={!isFormValid}
         />
       </div>
     </div>

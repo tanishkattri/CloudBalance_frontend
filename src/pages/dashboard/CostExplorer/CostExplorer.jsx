@@ -10,6 +10,9 @@ import { toast } from "react-toastify";
 import TwoDBarChart from "../../../component/TwoDBarChart";
 import LineChart from "../../../component/LineChart";
 import MuiDataTable from "../../../component/table/DataTable";
+import { transformCostDataForTable } from "../../../utils/costExplorerTableUtils";
+import { exportToExcel } from "../../../utils/exportToExcel";
+
 const CostExplorer = () => {
   const [loading, setLoading] = useState(false);
   const [allAccounts, setAllAccounts] = useState([]);
@@ -33,17 +36,41 @@ const CostExplorer = () => {
     accountNumber: selectedAccountNumber,
   };
 
-  const tableColumns = [
-    { field: "USAGE_MONTH", headerName: "Usage Month", flex: 1 },
-    { field: currentGroup, headerName: currentGroup, flex: 1 },
-    { field: "TOTAL_USAGE_COST", headerName: "Total Usage Cost (₹)", flex: 1 },
-  ];
-
-  // 💬 Create table rows by adding an 'id' 
-  const tableRows = (costData || []).map((item, index) => ({
-    id: index + 1,
-    ...item,
-  }));
+  const handleDownloadExcel = async () => {
+    try {
+      // 🛎️ Toast: Start fetching
+      const fetchingToast = toast.loading("Fetching data for download...");
+  
+      const res = await postApi("/snowflake/complete-cost", requestPayload);
+      const downloadData = res.data.data;
+  
+      if (downloadData.length === 0) {
+        toast.update(fetchingToast, {
+          render: "No data available to download ❗",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+        return;
+      }
+  
+      // ✅ Update fetching toast before starting download
+      toast.update(fetchingToast, {
+        render: "Download started 🚀",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
+  
+      exportToExcel(downloadData, currentGroup);
+  
+    } catch (err) {
+      console.error("Failed to download excel", err);
+  
+      toast.error("Failed to download excel ❌");
+    }
+  };
+  
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -92,9 +119,10 @@ const CostExplorer = () => {
         }
       } catch (err) {
         console.error("Failed to fetch cost data", err);
+        setCostData([]);
         toast.error("Failed to fetch cost data ❌");
       } finally {
-        setCostLoading(false); // Stop loading
+        setCostLoading(false);
       }
     };
 
@@ -102,7 +130,6 @@ const CostExplorer = () => {
       fetchCostData();
     }
   }, [currentGroup, filtersMap, startMonth, endMonth, selectedAccountNumber]);
-
 
   return (
     <>
@@ -200,16 +227,35 @@ const CostExplorer = () => {
             <LineChart costData={costData} groupByKey={currentGroup} />
           )}
         </div>
+        <div className="w-full flex justify-end mb-4">
+          <button
+            onClick={handleDownloadExcel}
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
+          >
+            Download Excel
+          </button>
+        </div>
         <div>
           {costLoading || !costData ? (
             <CenteredLoader />
           ) : (
             <div className="w-full">
-              <MuiDataTable
-                columns={tableColumns}
-                rows={tableRows}
-                pageSize={5}
-              />
+              {costData.length === 0 ? (
+                <p className="text-center text-gray-600">
+                  No cost data available.
+                </p>
+              ) : (
+                (() => {
+                  const { columns, rows } = transformCostDataForTable(
+                    costData,
+                    currentGroup
+                  );
+
+                  return (
+                    <MuiDataTable columns={columns} rows={rows} pageSize={10} />
+                  );
+                })()
+              )}
             </div>
           )}
         </div>

@@ -20,7 +20,7 @@ function App() {
     const fetchUser = async () => {
       try {
         const res = await getApi("/users/me");
-        dispatch(setUserData(res.data));
+        dispatch(setUserData(res.data.data));
       } catch (err) {
         console.error("User fetch failed", err);
         localStorage.removeItem("token");

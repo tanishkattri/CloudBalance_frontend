@@ -45,32 +45,37 @@ const Login = () => {
       setError(validationErrors);
       return;
     }
-
+  
     try {
       const response = await postApi("/auth/signin", data);
-
+  
       localStorage.setItem("token", response.data.data.token);
       toast.success("Login successful!");
+  
       const userRes = await getApi("/users/me");
-      dispatch(setUserData(userRes.data));
+      const userData = userRes.data.data;
+      dispatch(setUserData(userData));
+  
+      // 🌟 Navigate based on role
+      const role = userData?.role;
+  
       setTimeout(() => {
-        navigate("/dashboard/users", { replace: true });
+        if (role === "ADMIN") {
+          navigate("/dashboard/users", { replace: true });
+        } else if (role === "CUSTOMER" || role === "READ_ONLY") {
+          navigate("/dashboard/cost-explorer", { replace: true });
+        } else {
+          navigate("/dashboard/cost-explorer", { replace: true });
+        }
       }, 600);
+  
     } catch (err) {
       console.error("Login error:", err.message);
-
       const backendMessage = err?.response?.data?.message;
-
       toast.error(backendMessage || "Login failed. Please try again.");
-
-      // if (err.response?.status === 401) {
-      //   setError({
-      //     email: "",
-      //     password: backendMessage || "Invalid email or password",
-      //   });
-      // }
     }
   };
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,7 +88,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-white px-4">
-      {/* <ToastContainer /> */}
       <form
         onSubmit={handleLogin}
         className="bg-white shadow-xl rounded-[2rem] w-full max-w-sm p-8 space-y-5"

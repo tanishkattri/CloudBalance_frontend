@@ -16,20 +16,27 @@ const MuiDataTable = ({ columns, rows, pageSize = 10 }) => {
           border: '1px solid #e0e0e0',
           fontFamily: 'Inter, sans-serif',
           '& .MuiDataGrid-columnHeaders': {
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#edf2f7', 
             fontWeight: 'bold',
-            fontSize: '1rem',
-            borderBottom: '1px solid #e0e0e0',
+            fontSize: '1.05rem',
+            textTransform: 'uppercase', 
+            borderBottom: '2px solid #d1d5db', 
+            color: '#374151', 
+          },
+          '& .MuiDataGrid-columnHeaderTitle': {
+            fontWeight: 600,
           },
           '& .MuiDataGrid-cell': {
             borderBottom: '1px solid #f0f0f0',
+            fontSize: '0.95rem',
+            color: '#4b5563', 
           },
           '& .MuiDataGrid-row:hover': {
-            backgroundColor: '#f9f9f9',
+            backgroundColor: '#f9fafb', 
           },
           '& .MuiDataGrid-footerContainer': {
-            backgroundColor: '#f5f5f5',
-            borderTop: '1px solid #e0e0e0',
+            backgroundColor: '#edf2f7',
+            borderTop: '1px solid #d1d5db',
           },
         }}
       />

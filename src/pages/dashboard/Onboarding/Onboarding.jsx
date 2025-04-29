@@ -9,19 +9,86 @@ import I_AM_Role from "./steps/I_AM_Role/I_AM_Role";
 import { toast} from "react-toastify";
 const Onboarding = () => {
   const navigate = useNavigate();
+  const [isFormValid, setIsFormValid] = useState(false);
   const [account, setAccount] = useState({
     accountName: "",
     accountNumber: "",
     arnNumber: "",
   });
   const topRef = useRef(null);
+
+
+  const validateForm = (formData) => {
+    const { accountName, accountNumber, arnNumber } = formData;
+    const arnRegex = /^arn:aws:iam::\d{12}:role\/[\w+=,.@-]+$/;
+    const accountNumberRegex = /^\d{12}$/;
+  
+    if (
+      !accountName.trim() || accountName.trim().length < 2 ||
+      !accountNumberRegex.test(accountNumber.trim()) ||
+      !arnRegex.test(arnNumber.trim())
+    ) {
+      return false;
+    }
+    return true;
+  };
+  
   const handleChange = (e) => {
-    setAccount((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+  
+    const updatedAccount = { ...account, [name]: value };
+    setAccount(updatedAccount);
+  
+    // Validate form after every change
+    setIsFormValid(validateForm(updatedAccount));
   };
 
   const [errors, setErrors] = useState({
     arnNumber: "",
   });
+
+
+  const handleFieldBlur = (e) => {
+    const { name, value } = e.target;
+    const newErrors = { ...errors };
+  
+    if (!value.trim()) {
+      newErrors[name] = "This field is required.";
+    } else {
+      if (name === "arnNumber") {
+        const arnRegex = /^arn:aws:iam::\d{12}:role\/[\w+=,.@-]+$/;
+        if (!arnRegex.test(value.trim())) {
+          newErrors[name] = "Invalid IAM Role ARN format.";
+        } else {
+          newErrors[name] = "";
+        }
+      }
+      else if (name === "accountNumber") {
+        const accountNumberRegex = /^\d{12}$/; // exactly 12 digits
+        if (!accountNumberRegex.test(value.trim())) {
+          newErrors[name] = "Account Number must be exactly 12 digits.";
+        } else {
+          newErrors[name] = "";
+        }
+      }
+      else if (name === "accountName") {
+        if (value.trim().length < 2) {
+          newErrors[name] = "Account Name must be at least 2 characters.";
+        } else {
+          newErrors[name] = "";
+        }
+      }
+      else {
+        newErrors[name] = "";
+      }
+    }
+  
+    setErrors(newErrors);
+  };
+
+
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,8 +148,10 @@ const Onboarding = () => {
         data={account}
         nextStep={nextStep}
         onChange={handleChange}
+        onBlur={handleFieldBlur}
         errors={errors}
         setErrors={setErrors}
+        isFormValid={isFormValid}
         cancel={cancel}
       />
     ),

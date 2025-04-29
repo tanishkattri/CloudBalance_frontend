@@ -4,7 +4,6 @@ import RoleProtectedRoute from "../component/RoleProtectedRoutes";
 import Errorpage from "../component/ErrorPage/Errorpage";
 import CenteredLoader from "../component/CenteredLoader";
 import Login from "../pages/login/Login";
-// import CostExplorer from "../pages/dashboard/CostExplorer/CostExplorer";
 
 // Lazy load everything else
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));

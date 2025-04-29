@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import FormRenderer from "../../../../component/form/FormRender";
 import userUpdateConfig from "./updateUserConfig";
 import { getApi, putApi } from "../../../../services/apiService";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 import CommonButton from "../../../../component/button";
 
 const UpdateUser = () => {
@@ -26,7 +26,7 @@ const UpdateUser = () => {
     const fetchUser = async () => {
       try {
         const res = await getApi(`/users/${id}`);
-        const userData = res.data || res;
+        const userData = res.data.data || res;
         console.log(userData);
         setUser({
           firstName: userData.firstName || "",

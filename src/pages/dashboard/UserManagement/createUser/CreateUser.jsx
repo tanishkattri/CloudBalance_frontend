@@ -7,6 +7,7 @@ import FormRenderer from "../../../../component/form/FormRender";
 import { useEffect } from "react";
 import CommonButton from "../../../../component/button";
 import { postApi } from "../../../../services/apiService";
+import { toast } from "react-toastify";
 
 const CreateUser = () => {
   const navigate = useNavigate();
@@ -20,6 +21,33 @@ const CreateUser = () => {
     accounts: [],
   });
   const [allAccounts, setAllAccounts] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  const validateField = (name, value) => {
+    const fieldConfig = userConfig.find((field) => field.name === name);
+    if (!fieldConfig) return "";
+
+    if (fieldConfig.required && !value) {
+      return `${fieldConfig.label} is required.`;
+    }
+
+    if (fieldConfig.minlength && value.length < fieldConfig.minlength) {
+      return `${fieldConfig.label} must be at least ${fieldConfig.minlength} characters.`;
+    }
+
+    if (fieldConfig.maxlength && value.length > fieldConfig.maxlength) {
+      return `${fieldConfig.label} must be less than ${fieldConfig.maxlength} characters.`;
+    }
+
+    if (fieldConfig.pattern) {
+      const regex = new RegExp(fieldConfig.pattern);
+      if (!regex.test(value)) {
+        return `Invalid ${fieldConfig.label.toLowerCase()}.`;
+      }
+    }
+
+    return ""; // No error
+  };
 
   useEffect(() => {
     const fetchAccounts = async () => {
@@ -34,26 +62,63 @@ const CreateUser = () => {
     fetchAccounts();
   }, []);
 
-  
-
   const payload = {
     ...formData,
     accounts: formData.accounts.map((acc) => acc.id),
   };
 
+  // const handleChange = (e) => {
+  //   setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  // };
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
   };
-  
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const error = validateField(name, value);
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: error }));
+  };
+
+  const validateAllFields = () => {
+    let tempErrors = {};
+    userConfig.forEach((field) => {
+      const error = validateField(field.name, formData[field.name]);
+      if (error) {
+        tempErrors[field.name] = error;
+      }
+    });
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0; // No errors => form valid
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match");
+  
+    if (!validateAllFields()) {
       return;
     }
-    await postApi("/users", payload);
-    navigate("/dashboard/users");
+  
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+  
+    try {
+      await postApi("/users", payload);
+      toast.success("User created successfully");
+      navigate("/dashboard/users");
+    } catch (error) {
+      // Handle axios error
+      const backendMessage = error?.response?.data?.message;
+      if (backendMessage) {
+        toast.error(backendMessage);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    }
   };
   return (
     <>
@@ -83,7 +148,8 @@ const CreateUser = () => {
             fields={userConfig}
             data={formData}
             onChange={handleChange}
-            errors={{}}
+            onBlur={handleBlur}
+            errors={errors}
           />
           {formData.role === "CUSTOMER" && (
             <div className="col-span-2 bg-gray-50 border border-gray-300 p-4 rounded-md">
